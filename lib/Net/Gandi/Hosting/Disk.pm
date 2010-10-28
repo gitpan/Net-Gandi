@@ -1,12 +1,17 @@
 package Net::Gandi::Hosting::Disk;
 
 use Moose;
+use utf8;
 
 extends 'Net::Gandi';
 
 =head1 NAME
 
 Net::Gandi::Hosting::Disk - Interface to manage Disk. 
+
+=head1 DESCRIPTION
+
+A disk represents a virtual storage device you can attached to a VM. It then behaves like a block device where you can read and write data.
 
 =cut
 
@@ -20,16 +25,45 @@ Available params are:
 
 =over 
 
-=item id 
-=item state 
-=item size 
-=item name
-=item type
-=item vm_id
-=item datacenter_id
-=item items_per_page
-=item page
-=item sort_by
+=item * 
+
+id 
+
+=item * 
+
+state 
+
+=item * 
+
+size
+
+=item * 
+
+name
+
+=item * 
+
+type
+
+=item * 
+
+vm_id
+
+=item * 
+
+datacenter_id
+
+=item * 
+
+items_per_page
+
+=item * 
+
+page
+
+=item * 
+
+sort_by
 
 =back
 
@@ -50,13 +84,33 @@ Available params are:
 
 =over 
 
-=item id 
-=item state 
-=item size 
-=item name
-=item type
-=item vm_id
-=item datacenter_id
+=item * 
+
+id
+
+=item * 
+
+state
+
+=item * 
+
+size
+
+=item * 
+
+name
+
+=item * 
+
+type
+
+=item * 
+
+vm_id
+
+=item * 
+
+datacenter_id
 
 =back
 
@@ -144,10 +198,6 @@ sub disk_delete {
 
     return $self->call_rpc('disk.delete', $self->id);
 }
-
-=head1 DESCRIPTION
-
-A disk represents a virtual storage device you can attached to a VM. It then behaves like a block device where you can read and write data. 
 
 =head1 AUTHOR
 

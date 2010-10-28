@@ -3,6 +3,7 @@ package Net::Gandi;
 use Moose;
 use XMLRPC::Lite;
 use Carp;
+use utf8;
 use Net::Gandi::Hosting::VM;
 use Net::Gandi::Hosting::Disk;
 use Net::Gandi::Hosting::Image;
@@ -15,7 +16,7 @@ Net::Gandi - A perl interface to the Gandi XMLRPC API
 
 =cut
 
-our $VERSION = '0.1';
+our $VERSION = '0.2';
 
 has 'apikey' => ( is       => 'rw', 
                   required => 1,
@@ -54,7 +55,7 @@ sub call_rpc {
 
 =head1 DESCRIPTION
 
-This module provides a Perl interface to the Gandi API. See l<http:://rpc.gandi.net>
+This module provides a Perl interface to the Gandi API. See L<http:://rpc.gandi.net>
 for a full description of the Gandi API. For the moment, the API is in beta. You can
 ask for a key via email. The interface can be changed.
 
@@ -66,14 +67,14 @@ Natal Ngétal, C<< <hobbestig@cpan.org> >>
 
 This module is developed on Github at:
 
-l<http://github.com/hobbestigrou/Net-Gandi> 
+L<http://github.com/hobbestigrou/Net-Gandi> 
 
 Feel free to fork the repo and submit pull requests
 
 =head1 ACKNOWLEDGEMENTS
 
 Franck Cuny and Michael Scherer for fix typo.
-Gandi for API 
+Gandi for this API 
 
 =head1 BUGS
 
@@ -98,8 +99,8 @@ See http://dev.perl.org/licenses/ for more information.
 =head1 SEE ALSO
 
 L<Moose>
-l<XMLRPC::Lite>
-l<http:://rpc.gandi.net>
+L<XMLRPC::Lite>
+L<http:://rpc.gandi.net>
 
 =cut
 
