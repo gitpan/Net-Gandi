@@ -4,19 +4,23 @@ use Moose;
 use XMLRPC::Lite;
 use Carp;
 use utf8;
+use Net::Gandi::Hosting::Datacenter;
 use Net::Gandi::Hosting::VM;
 use Net::Gandi::Hosting::Disk;
 use Net::Gandi::Hosting::Image;
 use Net::Gandi::Hosting::Iface;
 use Net::Gandi::Hosting::IP;
+use Net::Gandi::Hosting::Operation
 
 =head1 NAME 
+
+=encoding utf-8
 
 Net::Gandi - A perl interface to the Gandi XMLRPC API
 
 =cut
 
-our $VERSION = '0.5';
+our $VERSION = '0.6';
 
 has 'apikey' => ( is       => 'rw', 
                   required => 1,
@@ -30,19 +34,19 @@ sub call_rpc {
     my $proxy = XMLRPC::Lite->proxy($url);
     my $api_response;
 
-   eval {
-       $api_response = $proxy->call($method, $self->apikey, @args);
-   };
+    eval {
+        $api_response = $proxy->call($method, $self->apikey, @args);
+    };
 
-  if ( !$api_response ) {
-      croak $@;
-  }
+    if ( !$api_response ) {
+        croak $@;
+    }
 
- if ( $api_response->faultstring() ) {
-     croak $api_response->faultstring();
- }
+    if ( $api_response->faultstring() ) {
+        croak $api_response->faultstring();
+    }
 
- return $api_response->result();
+    return $api_response->result();
 }
 
 =head1 SYNOPSIS
