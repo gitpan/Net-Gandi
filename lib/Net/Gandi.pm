@@ -3,6 +3,7 @@ package Net::Gandi;
 use Moose;
 use XMLRPC::Lite;
 use Carp;
+use Class::Date qw( :errors date localdate gmdate now -DateParse );
 use utf8;
 use Net::Gandi::Hosting::Datacenter;
 use Net::Gandi::Hosting::VM;
@@ -10,7 +11,7 @@ use Net::Gandi::Hosting::Disk;
 use Net::Gandi::Hosting::Image;
 use Net::Gandi::Hosting::Iface;
 use Net::Gandi::Hosting::IP;
-use Net::Gandi::Hosting::Operation
+use Net::Gandi::Hosting::Operation;
 
 =head1 NAME 
 
@@ -20,7 +21,7 @@ Net::Gandi - A perl interface to the Gandi XMLRPC API
 
 =cut
 
-our $VERSION = '0.7';
+our $VERSION = '0.8';
 
 has 'apikey' => ( is       => 'rw', 
                   required => 1,
@@ -46,7 +47,31 @@ sub call_rpc {
         croak $api_response->faultstring();
     }
 
-    return $api_response->result();
+    return _date_object($api_response->result());
+}
+
+sub _date_object {
+    my ( $object ) = @_;
+
+   if ( ref($object) eq 'ARRAY' ) {
+       foreach my $obj (@{$object}) {
+           while ( my ($key, $value) = each %{$obj} ) {
+               if ( $key =~ m/date_/ ) {
+                   $obj->{$key} = Class::Date->new($value);
+               }
+           }
+       }
+   } 
+   else {
+       while ( my ($key, $value) = each %{$object} ) {
+           if ( $key =~ m/date_/ ) {
+               $object->{$key} = Class::Date->new($value);
+           }
+       }
+   }
+  
+  return $object;
+        
 }
 
 =head1 SYNOPSIS

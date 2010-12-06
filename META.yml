@@ -1,6 +1,6 @@
 --- #YAML:1.0
 name:               Net-Gandi
-version:            0.7
+version:            0.8
 abstract:           A perl interface to the Gandi XMLRPC API
 author:
     - Natal Ngétal <hobbestig@cpan.org>
@@ -12,6 +12,7 @@ build_requires:
     ExtUtils::MakeMaker:  0
 requires:
     Carp:          0
+    Class::Date:   0
     Moose:         0
     Test::More:    0
     XMLRPC::Lite:  0
