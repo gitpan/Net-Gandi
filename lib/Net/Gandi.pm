@@ -21,17 +21,27 @@ Net::Gandi - A perl interface to the Gandi XMLRPC API
 
 =cut
 
-our $VERSION = '0.8';
+our $VERSION = '0.9';
 
 has 'apikey' => ( is       => 'rw', 
                   required => 1,
                   isa      => 'Str'
 );
 
+has 'apiurl' => ( is      => 'rw',
+                  default => 'https://rpc.gandi.net/xmlrpc/2.0/',
+                  isa     => 'Str'
+);
+
+has 'date_object' => ( is      => 'rw',
+                       default => 0,
+                       isa     => 'Bool',
+);
+
 sub call_rpc {
     my ( $self, $method, @args ) = @_;
     
-    my $url   = 'https://rpc.gandi.net/xmlrpc/2.0/';
+    my $url   = $self->apiurl;
     my $proxy = XMLRPC::Lite->proxy($url);
     my $api_response;
 
@@ -47,31 +57,35 @@ sub call_rpc {
         croak $api_response->faultstring();
     }
 
-    return _date_object($api_response->result());
+    if ( $self->date_object ) {
+        return _date_object($api_response->result());
+    }
+    else {
+        return $api_response->result();
+    }
 }
 
 sub _date_object {
     my ( $object ) = @_;
 
-   if ( ref($object) eq 'ARRAY' ) {
-       foreach my $obj (@{$object}) {
-           while ( my ($key, $value) = each %{$obj} ) {
-               if ( $key =~ m/date_/ ) {
-                   $obj->{$key} = Class::Date->new($value);
-               }
-           }
-       }
-   } 
-   else {
-       while ( my ($key, $value) = each %{$object} ) {
-           if ( $key =~ m/date_/ ) {
-               $object->{$key} = Class::Date->new($value);
-           }
-       }
-   }
-  
-  return $object;
-        
+    if ( ref($object) eq 'ARRAY' ) {
+        foreach my $obj (@{$object}) {
+            while ( my ($key, $value) = each %{$obj} ) {
+                if ( $key =~ m/date_/ ) {
+                    $obj->{$key} = Class::Date->new($value);
+                }
+            }
+        }
+    } 
+    else {
+        while ( my ($key, $value) = each %{$object} ) {
+            if ( $key =~ m/date_/ ) {
+                $object->{$key} = Class::Date->new($value);
+            }
+        }
+    }
+
+    return $object;
 }
 
 =head1 SYNOPSIS
@@ -84,7 +98,7 @@ sub _date_object {
 
 =head1 DESCRIPTION
 
-This module provides a Perl interface to the Gandi API. See L<http:://rpc.gandi.net>
+This module provides a Perl interface to the Gandi API. See L<http://rpc.gandi.net>
 for a full description of the Gandi API. For the moment, the API is in beta. You can
 ask for a key via email. The interface can be changed.
 
@@ -129,7 +143,7 @@ See http://dev.perl.org/licenses/ for more information.
 
 L<Moose>
 L<XMLRPC::Lite>
-L<http:://rpc.gandi.net>
+L<http://rpc.gandi.net>
 
 =cut
 
