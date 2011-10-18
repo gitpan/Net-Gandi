@@ -1,7 +1,7 @@
 package Net::Gandi::Hosting::Disk;
 
 use Moose;
-use utf8;
+use Carp;
 
 extends 'Net::Gandi';
 
@@ -136,6 +136,8 @@ Parameter: None
 sub info {
     my ( $self ) = @_;
 
+    carp 'Required parameter id is not defined' if ( ! $self->id );
+
     return $self->call_rpc( 'disk.info', $self->id );
 }
 
@@ -150,6 +152,7 @@ Parameter: None
 sub get_options {
     my ( $self ) = @_;
 
+    carp 'Required parameter id is not defined' if ( ! $self->id );
     return $self->call_rpc( 'disk.get_options', $self->id );
 }
 
@@ -186,6 +189,8 @@ Update the disk to match the expected attributes.
 sub update {
     my ( $self, $params ) = @_;
 
+
+    carp 'Required parameter id is not defined' if ( ! $self->id );
     return $self->call_rpc('disk.update', $self->id, $params);
 }
 
@@ -198,6 +203,8 @@ Delete a disk. Warning, erase data. Free the quota used by the disk size.
 sub delete {
     my ( $self ) = @_;
 
+
+    carp 'Required parameter id is not defined' if ( ! $self->id );
     return $self->call_rpc('disk.delete', $self->id);
 }
 
@@ -213,6 +220,9 @@ Params: vm_id
 
 sub attach {
     my ( $self, $vm_id, $params ) = @_;
+
+    carp 'Required parameter id is not defined' if ( ! $vm_id );
+    carp 'Required parameter id is not defined' if ( ! $self->id );
 
     if ( $params ) {
         return $self->call_rpc('vm.disk_attach', $vm_id, $self->id, $params);
@@ -232,6 +242,9 @@ Params: vm_id
 
 sub detach {
     my ( $self, $vm_id ) = @_;
+
+    carp 'Required parameter id is not defined' if ( ! $vm_id );
+    carp 'Required parameter id is not defined' if ( ! $self->id );
 
     return $self->call_rpc('vm.disk_detach', $vm_id, $self->id);
 }

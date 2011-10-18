@@ -1,5 +1,8 @@
 Revision history for Net::Gandi
 
+0.12 19/10/2011
+     Clean code, add several attributes useragent err and errstr, change the manner to manage error of api, add validation fix and add documentation.
+
 0.11 20/06/11
      I forgot update MANIFEST file. Again.
 

@@ -4,7 +4,7 @@ use Moose;
 use XMLRPC::Lite;
 use Carp;
 use Class::Date qw( :errors date localdate gmdate now -DateParse );
-use utf8;
+
 use Net::Gandi::Types;
 use Net::Gandi::Hosting::Datacenter;
 use Net::Gandi::Hosting::VM;
@@ -20,42 +20,82 @@ use Net::Gandi::Hosting::Operation;
 
 Net::Gandi - A perl interface to the Gandi XMLRPC API
 
+=head1 new
+Creates a new instance of Net::Gandi
+
+Parameters:
+
+=over
+
+=item * apikey
+
+B<(Required)> Api key of your account.
+
+=item * apiurl
+
+Specified a url. The default value is current api version
+
+=item * useragent
+
+Specified a useragent. The default value is Net::Gandi with the version.
+
+=item * date_object
+
+Boolean to transform the string date in a perl date object. Use Class::Date.
+
+=back
+
 =cut
 
-our $VERSION = '0.11';
+our $VERSION = '0.12';
 
-has 'apikey' => ( is       => 'rw',
-                  required => 1,
-                  isa      => 'Str'
+has 'apikey' => (
+    is       => 'rw',
+    required => 1,
+    isa      => 'Str'
 );
 
-has 'apiurl' => ( is      => 'rw',
-                  isa     => 'Net::Gandi::Types::URI',
-                  coerce  => 1,
-                  default => 'https://rpc.gandi.net/xmlrpc/2.0/',
+has 'apiurl' => (
+    is      => 'rw',
+    isa     => 'Net::Gandi::Types::URI',
+    coerce  => 1,
+    default => 'https://rpc.gandi.net/xmlrpc/2.0/',
 );
 
-has 'date_object' => ( is      => 'rw',
-                       default => 0,
-                       isa     => 'Bool',
+has 'useragent' => (
+    is      => 'rw',
+    isa     => 'Str',
+    default => "Net::Gandi/$VERSION",
+);
+
+has 'err' => (
+    is      => 'rw',
+    isa     => 'Int',
+);
+
+has 'errstr' => (
+    is      => 'rw',
+    isa     => 'Str',
+);
+
+has 'date_object' => (
+    is      => 'rw',
+    default => 0,
+    isa     => 'Bool',
 );
 
 sub call_rpc {
     my ( $self, $method, @args ) = @_;
-    my $url   = $self->apiurl;
-    my $proxy = XMLRPC::Lite->proxy($url);
-    my $api_response;
 
-    eval {
-        $api_response = $proxy->call($method, $self->apikey, @args);
-    };
-
-    if ( !$api_response ) {
-        croak $@;
-    }
+    my $url          = $self->apiurl;
+    my $proxy        = XMLRPC::Lite->proxy($url);
+    my $api_response = $proxy->call($method, $self->apikey, @args);
+    $proxy->transport->agent($self->useragent);
 
     if ( $api_response->faultstring() ) {
-        croak $api_response->faultstring();
+        $self->err($api_response->faultcode());
+        $self->errstr($api_response->faultstring());
+        return undef;
     }
 
     if ( $self->date_object ) {
@@ -90,6 +130,22 @@ sub _date_object {
 
 }
 
+=head1 err
+
+Returns the numeric code of last error.
+
+    my $err_code = $gandi->err;
+
+=cut
+
+=head1 errstr
+
+Returns the human readable text for last error.
+
+    my $err_description = gandi->errstr
+
+=cut
+
 =head1 cast_value
 
 Force XMLRPC data types, to use before calls when using booleans for example.
@@ -106,9 +162,9 @@ sub cast_value {
 
     use Net::Gandi;
 
-    my $gandi = Net::Gandi::Hosting::VM->new(apikey => 'myapikey', id => 42);
+    my $vm = Net::Gandi::Hosting::VM->new(apikey => 'myapikey', id => 42);
 
-    my $vm_info = $gandi->vm_info;
+    my $vm_info = $vm->info;
 
 =head1 DESCRIPTION
 
