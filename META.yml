@@ -34,4 +34,4 @@ requires:
   warnings: 0
 resources:
   repository: git://github.com/hobbestigrou/Net-Gandi.git
-version: 1.121850
+version: 1.121851

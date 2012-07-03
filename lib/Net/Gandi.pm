@@ -8,7 +8,7 @@
 #
 package Net::Gandi;
 {
-  $Net::Gandi::VERSION = '1.121850';
+  $Net::Gandi::VERSION = '1.121851';
 }
 
 # ABSTRACT: A Perl interface for gandi api
@@ -74,7 +74,7 @@ Net::Gandi - A Perl interface for gandi api
 
 =head1 VERSION
 
-version 1.121850
+version 1.121851
 
 =head1 SYNOPSIS
 
@@ -133,7 +133,7 @@ Please report any bugs or feature requests in github.
 
 You can find documentation for this module with the perldoc command.
 
-    perldoc Dancer::Plugin::Feed
+    perldoc Net::Gandi
 
 =head1 SEE ALSO
 

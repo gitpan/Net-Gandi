@@ -8,7 +8,7 @@
 #
 package Net::Gandi::Hosting::VM;
 {
-  $Net::Gandi::Hosting::VM::VERSION = '1.121850';
+  $Net::Gandi::Hosting::VM::VERSION = '1.121851';
 }
 
 # ABSTRACT: Vm interface
@@ -183,7 +183,7 @@ Net::Gandi::Hosting::VM - Vm interface
 
 =head1 VERSION
 
-version 1.121850
+version 1.121851
 
 =head1 ATTRIBUTES
 

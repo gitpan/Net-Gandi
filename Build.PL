@@ -19,7 +19,7 @@ my %module_build_args = (
     "Natal Ng\303\251tal"
   ],
   "dist_name" => "Net-Gandi",
-  "dist_version" => "1.121850",
+  "dist_version" => "1.121851",
   "license" => "perl",
   "module_name" => "Net::Gandi",
   "recommends" => {},

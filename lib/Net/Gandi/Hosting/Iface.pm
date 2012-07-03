@@ -8,7 +8,7 @@
 #
 package Net::Gandi::Hosting::Iface;
 {
-  $Net::Gandi::Hosting::Iface::VERSION = '1.121850';
+  $Net::Gandi::Hosting::Iface::VERSION = '1.121851';
 }
 
 # ABSTRACT: Iface interface
@@ -103,7 +103,7 @@ Net::Gandi::Hosting::Iface - Iface interface
 
 =head1 VERSION
 
-version 1.121850
+version 1.121851
 
 =head1 ATTRIBUTES
 
