@@ -1,84 +1,99 @@
+#
+# This file is part of Net-Gandi
+#
+# This software is copyright (c) 2012 by Natal Ngétal.
+#
+# This is free software; you can redistribute it and/or modify it under
+# the same terms as the Perl 5 programming language system itself.
+#
 package Net::Gandi::Hosting::Image;
+{
+  $Net::Gandi::Hosting::Image::VERSION = '1.121850';
+}
+
+# ABSTRACT: Disk image interface
 
 use Moose;
+use MooseX::Params::Validate;
+use Net::Gandi::Types Client => { -as => 'Client_T' };
+
 use Carp;
 
-extends 'Net::Gandi';
-
-=head1 NAME
-
-=encoding utf-8
-
-Net::Gandi::Hosting::Image - Interface to manage image. 
-
-=head1 DESCRIPTION
-
-A image describes a system image with an operating system. It is associated with a disk that stores the filesystem. Methods below are read-only they do not modify any data or state.
-
-=cut
 
 has 'id' => ( is => 'rw', isa => 'Int' );
 
-=head1 list 
+has client => (
+    is       => 'rw',
+    isa      => Client_T,
+    required => 1,
+);
 
-Perform a image.list
-
-Params: 
-
-=over 
-
-=item * 
-
-label: Take a string, this a name of the operation system
-
-=item * 
-
-datacenter_id: Take a integer, this a location of the resource
-
-=item * 
-
-disk_id: Take a integer, this a id of the disk to use as a source
-
-=item * 
-
-visibility: Take a string ( public | private | alpha ), who can access this image
-
-=item * 
-
-os_arch: Take a string ( x86-32 | x86-64 ), CPU architecture this image is made for
-
-=item * 
-
-author_id: Take a integer, who is the author of this image
-
-=back
-
-=cut
 
 sub list {
-    my ( $self, $params ) = @_;
+    my ( $self, $params ) = validated_list(
+        \@_,
+        opts => { isa => 'HashRef', optional => 1 }
+    );
 
     $params ||= {};
-    return $self->call_rpc( 'image.list', $params );
+    return $self->client->call_rpc( 'image.list', $params );
 }
 
-=head1 info
-
-Perform a image.info
-
-Params: None
-
-=cut 
 
 sub info {
     my ( $self ) = @_;
 
     carp 'Required parameter id is not defined' if ( ! $self->id );
-    return $self->call_rpc( 'image.info', $self->id );
+    return $self->client->call_rpc( 'image.info', $self->id );
 }
 
 1;
 
+__END__
+=pod
+
+=head1 NAME
+
+Net::Gandi::Hosting::Image - Disk image interface
+
+=head1 VERSION
+
+version 1.121850
+
+=head1 ATTRIBUTES
+
+=head2 id
+
+rw, Int. Id of the image.
+
+=head1 METHODS
+
+=head2 list
+
+  $image->list;
+
+List avaible disk image.
+
+  input: opts (HashRef) : Filtering options
+  output: (HashRef)     : List of disk image
+
+=head2 info
+
+Perform a image.info
+
+  input: None
+  output: (HashRef) : Disk image informations
+
 =head1 AUTHOR
 
-Natal Ngétal, C<< <hobbestig@cpan.org> >>
+Natal Ngétal
+
+=head1 COPYRIGHT AND LICENSE
+
+This software is copyright (c) 2012 by Natal Ngétal.
+
+This is free software; you can redistribute it and/or modify it under
+the same terms as the Perl 5 programming language system itself.
+
+=cut
+

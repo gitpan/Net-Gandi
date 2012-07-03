@@ -1,161 +1,171 @@
+#
+# This file is part of Net-Gandi
+#
+# This software is copyright (c) 2012 by Natal Ngétal.
+#
+# This is free software; you can redistribute it and/or modify it under
+# the same terms as the Perl 5 programming language system itself.
+#
 package Net::Gandi::Hosting::Iface;
+{
+  $Net::Gandi::Hosting::Iface::VERSION = '1.121850';
+}
+
+# ABSTRACT: Iface interface
 
 use Moose;
+use MooseX::Params::Validate;
+use Net::Gandi::Types Client => { -as => 'Client_T' };
+use Net::Gandi::Error qw(_validated_params);
+
 use Carp;
 
-extends 'Net::Gandi';
-
-=head1 NAME
-
-=encoding utf-8
-
-Net::Gandi::Hosting::Iface - Interface to manage Iface. 
-
-=head1 DESCRIPTION
-
-A iface represent a network interface.
-
-=cut
 
 has 'id' => ( is => 'rw', isa => 'Int' );
 
-=head1 list 
+has client => (
+    is       => 'rw',
+    isa      => Client_T,
+    required => 1,
+);
 
-List network interfaces associated to apikey that match the filter.
-
-Available params are: 
-
-=over 
-
-=item *
-
-id
-
-=item *
-
-state 
-
-=item *
-
-type
-
-=item * 
-
-vm_id
-
-=item * 
-
-items_per_page
-
-=item *
-
-page
-
-=item * 
-
-sort_by
-
-=back
-
-=cut
 
 sub list {
-    my ( $self, $params ) = @_;
+    my ( $self, $params ) = validated_list(
+        \@_,
+        opts => { isa => 'HashRef', optional => 1 }
+    );
 
     $params ||= {};
-    return $self->call_rpc( "iface.list", $params );
+    return $self->client->call_rpc( "iface.list", $params );
 }
 
-=head1 count
-
-Count network interfaces associated to apikey that match the filter
-
-Available params are: 
-
-=over 
-
-=item * 
-
-id 
-
-=item * 
-
-state 
-
-=item * 
-
-type
-
-=item *
-
-vm_id
-
-=back
-
-=cut
 
 sub count {
-    my ( $self, $params ) = @_;
+    my ( $self, $params ) = validated_list(
+        \@_,
+        opts => { isa => 'HashRef', optional => 1 }
+    );
 
     $params ||= {};
-    return $self->call_rpc('iface.count', $params);
+    return $self->client->call_rpc('iface.count', $params);
 }
 
-=head1 info
-
-Returns informations about the network interface
-
-=cut 
 
 sub info {
     my ( $self ) = @_;
 
     carp 'Required parameter id is not defined' if ( ! $self->id );
-    return $self->call_rpc( 'iface.info', $self->id );
+    return $self->client->call_rpc( 'iface.info', $self->id );
 }
 
-=head1 create
-
-Create a iface.
-
-=cut
 
 sub create {
-    my ( $self, $params ) = @_;
+    my ( $self, $params ) = validated_list(
+        \@_,
+        iface_spec => { isa => 'HashRef' }
+    );
 
-    return $self->call_rpc( "iface.create", $params );
+    _validated_params('iface_create', $params);
+
+    return $self->client->call_rpc( "iface.create", $params );
 }
 
-=head1 update
-
-Updates network interface attributes.
-
-=cut
 
 sub update {
-    my ( $self, $params ) = @_;
+    my ( $self, $params ) = validated_list(
+        \@_,
+        iface_spec => { isa => 'HashRef' }
+    );
 
     carp 'Required parameter id is not defined' if ( ! $self->id );
-    return $self->call_rpc( "iface.update", $self->id, $params );
+    _validated_params('iface_update', $params);
+
+    return $self->client->call_rpc( "iface.update", $self->id, $params );
 }
 
-=head1 delete
-
-Deletes a network interface.
-
-=cut
 
 sub delete {
     my ( $self ) = @_;
 
     carp 'Required parameter id is not defined' if ( ! $self->id );
-    return $self->call_rpc('iface.delete', $self->id);
+    return $self->client->call_rpc('iface.delete', $self->id);
 }
+
+1;
+
+__END__
+=pod
+
+=head1 NAME
+
+Net::Gandi::Hosting::Iface - Iface interface
+
+=head1 VERSION
+
+version 1.121850
+
+=head1 ATTRIBUTES
+
+=head2 id
+
+rw, Int. Id of the iface.
+
+=head1 METHODS
+
+=head2 list
+
+  $iface->list;
+
+List network interfaces.
+
+  input: opts (HashRef) : Filtering options
+  output: (HashRef)     : List of List network interfaces
+
+=head2 count
+
+  $iface->count;
+
+Count network interfaces..
+
+  input: opts (HashRef) : Filtering options
+  output: (Int)         : number of network interfaces.
+
+=head2 info
+
+Returns informations about the network interface
+
+  input: None
+  output: (HashRef) : Network interfaces informations
+
+=head2 create
+
+Create a iface.
+
+  input: iface_spec (HashRef)   : specifications of network interfaces to create
+  output: (ArrayRef)         : Operation iface create
+
+=head2 update
+
+Updates network interface attributes.
+
+  input: iface_spec (HashRef) : specifications of network interfaces to update.
+  output: (HashRef)  : Iface update operation
+
+=head2 delete
+
+Deletes a network interface.
 
 =head1 AUTHOR
 
-Natal Ngétal, C<< <hobbestig@cpan.org> >>
+Natal Ngétal
+
+=head1 COPYRIGHT AND LICENSE
+
+This software is copyright (c) 2012 by Natal Ngétal.
+
+This is free software; you can redistribute it and/or modify it under
+the same terms as the Perl 5 programming language system itself.
 
 =cut
 
-1;

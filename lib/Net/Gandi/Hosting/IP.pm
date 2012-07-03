@@ -1,93 +1,155 @@
+#
+# This file is part of Net-Gandi
+#
+# This software is copyright (c) 2012 by Natal Ngétal.
+#
+# This is free software; you can redistribute it and/or modify it under
+# the same terms as the Perl 5 programming language system itself.
+#
 package Net::Gandi::Hosting::IP;
+{
+  $Net::Gandi::Hosting::IP::VERSION = '1.121850';
+}
+
+# ABSTRACT: Ip interface
 
 use Moose;
+use MooseX::Params::Validate;
+use Net::Gandi::Types Client => { -as => 'Client_T' };
+use Net::Gandi::Error qw(_validated_params);
+
 use Carp;
 
-extends 'Net::Gandi';
-
-=head1 NAME
-
-=encoding utf-8
-
-Net::Gandi::Hosting::IP - Interface to manage IP. 
-
-=cut
 
 has 'id' => ( is => 'rw', isa => 'Int' );
 
-=head1 list
+has client => (
+    is       => 'rw',
+    isa      => Client_T,
+    required => 1,
+);
 
-List IP associated with apikey that match the filter
-
-=cut
 
 sub list {
-    my ( $self, $params ) = @_;
+    my ( $self, $params ) = validated_list(
+        \@_,
+        opts => { isa => 'HashRef', optional => 1 }
+    );
 
     $params ||= {};
-    return $self->call_rpc( 'ip.list', $params );
+    return $self->client->call_rpc( 'ip.list', $params );
 }
 
-=head1 count 
-
-List IP associated with apikey that match the filter
-
-=cut
 
 sub count {
-    my ( $self, $params ) = @_;
+    my ( $self, $params ) = validated_list(
+        \@_,
+        opts => { isa => 'HashRef', optional => 1 }
+    );
 
     $params ||= {};
-    return $self->call_rpc('ip.count', $params);
+    return $self->client->call_rpc('ip.count', $params);
 }
 
-=head1 info
-
-Return a mapping of the IP attributes.
-
-Parameter: None
-
-=cut 
 
 sub info {
     my ( $self ) = @_;
 
     carp 'Required parameter id is not defined' if ( ! $self->id );
-    return $self->call_rpc( 'ip.info', $self->id );
+    return $self->client->call_rpc( 'ip.info', $self->id );
 }
 
-=head1 update
-
-Updates a IP’s attributes
-
-=cut
 
 sub update {
-    my ( $self, $params ) = @_;
+    my ( $self, $params ) = validated_list(
+        \@_,
+        ip_spec => { isa => 'HashRef' }
+    );
 
     carp 'Required parameter id is not defined' if ( ! $self->id );
+    _validated_params('ip_update', $params);
 
     $params ||= {};
-    return $self->call_rpc('ip.update', $self->id, $params);
+    return $self->client->call_rpc('ip.update', $self->id, $params);
 }
 
 #sub attach {
 #    my ( $self, $iface_id ) = @_;
 #
-#    return $self->call_rpc('iface.attach', $iface_id, $self->id);
+#    return $self->client->call_rpc('iface.attach', $iface_id, $self->id);
 #}
 
 
 #sub detach {
 #    my ( $self, $iface_id ) = @_;
 #
-#    return $self->call_rpc('iface.detach', $iface_id, $self->id);
+#    return $self->client->call_rpc('iface.detach', $iface_id, $self->id);
 #}
+
+
+1;
+
+__END__
+=pod
+
+=head1 NAME
+
+Net::Gandi::Hosting::IP - Ip interface
+
+=head1 VERSION
+
+version 1.121850
+
+=head1 ATTRIBUTES
+
+=head2 id
+
+rw, Int. Id of the ip.
+
+=head1 METHODS
+
+=head2 list
+
+  $ip->list;
+
+List ip addresses.
+
+  input: opts (HashRef) : Filtering options
+  output: (HashRef)     : List of ip
+
+=head2 count
+
+  $ip->count;
+
+Count ip adresses.
+
+  input: opts (HashRef) : Filtering options
+  output: (Int)         : number of ip
+
+=head2 info
+
+Return a mapping of the IP attributes.
+
+  input: None
+  output: (HashRef) : Vm informations
+
+=head2 update
+
+Updates a IP’s attributes
+
+  input: ip_spec (HashRef) : specifications of the ip address to update
+  output: (HashRef)        : Operation ip update
 
 =head1 AUTHOR
 
-Natal Ngétal, C<< <hobbestig@cpan.org> >>
+Natal Ngétal
+
+=head1 COPYRIGHT AND LICENSE
+
+This software is copyright (c) 2012 by Natal Ngétal.
+
+This is free software; you can redistribute it and/or modify it under
+the same terms as the Perl 5 programming language system itself.
 
 =cut
 
-1;

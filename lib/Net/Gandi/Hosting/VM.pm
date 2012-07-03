@@ -1,177 +1,90 @@
+#
+# This file is part of Net-Gandi
+#
+# This software is copyright (c) 2012 by Natal Ngétal.
+#
+# This is free software; you can redistribute it and/or modify it under
+# the same terms as the Perl 5 programming language system itself.
+#
 package Net::Gandi::Hosting::VM;
+{
+  $Net::Gandi::Hosting::VM::VERSION = '1.121850';
+}
+
+# ABSTRACT: Vm interface
 
 use Moose;
+use MooseX::Params::Validate;
+use Net::Gandi::Types Client => { -as => 'Client_T' };
+use Net::Gandi::Error qw(_validated_params);
+
 use Carp;
 
-extends 'Net::Gandi';
-
-=head1 NAME
-
-=encoding utf-8
-
-Net::Gandi::Hosting::VM - Interface to manage VM. 
-
-=head1 DESCRIPTION
-
-A VM (Virtual Machine) describes a server’s resources and state.
-
-=cut
 
 has 'id' => ( is => 'rw', isa => 'Int' );
 
-=head1 list 
+has client => (
+    is       => 'rw',
+    isa      => Client_T,
+    required => 1,
+);
 
-Returns the list of VMs associated with apikey, matched by filters, if specified.
-
-Available params are: 
-
-=over 
-
-=item *
-
-id 
-
-=item * 
-
-memory
-
-=item * 
-
-state
-
-=item * 
-
-shares
-
-=item * 
-
-hostname
-
-=item * 
-
-cores
-
-=item * 
-
-datacenter_id
-
-=item * 
-
-items_per_page
-
-=item * 
-
-page
-
-=item * 
-
-sort_by
-
-=back
-
-=cut
 
 sub list {
-    my ( $self, $params ) = @_;
+    my ( $self, $params ) = validated_list(
+        \@_,
+        opts => { isa => 'HashRef', optional => 1 }
+    );
 
     $params ||= {};
-    return $self->call_rpc( "vm.list", $params );
+    return $self->client->call_rpc( "vm.list", $params );
 }
 
-=head1 count
-
-Returns the number of VMs associated with apikey, matched by filters, if specified.
-
-Available params are: 
-
-=over 
-
-=item * 
-
-id 
-
-=item * 
-
-memory
-
-=item * 
-
-state
-
-=item * 
-
-shares
-
-=item * 
-
-hostname
-
-=item * 
-
-cores
-
-=item * 
-
-datacenter_id
-
-=back
-
-=cut
 
 sub count {
-    my ( $self, $params ) = @_;
+    my ( $self, $params ) = validated_list(
+        \@_,
+        opts => { isa => 'HashRef', optional => 1 }
+    );
 
     $params ||= {};
-    return $self->call_rpc('vm.count', $params);
+    return $self->client->call_rpc('vm.count', $params);
 }
 
-=head1 info
-
-Return a mapping of the VM attributes.
-
-Parameter: None
-
-    use Net::Gandi;
-
-    my $vm   = Net::Gandi::Hosting::VM->new( apikey => 'myapikey', id => 42 );
-    my $info = $vm->info;
-
-=cut 
 
 sub info {
     my ( $self ) = @_;
 
     carp 'Required parameter id is not defined' if ( ! $self->id );
-    return $self->call_rpc( 'vm.info', $self->id );
+    return $self->client->call_rpc( 'vm.info', $self->id );
 }
 
-=head1 create
-
-Creates a VM and returns the corresponding operations.
-
-=cut
 
 sub create {
-    my ( $self, $params ) = @_;
+    my ( $self, $params ) = validated_list(
+        \@_,
+        vm_spec => { isa => 'HashRef' }
+    );
+
+    _validated_params('vm_create', $params);
 
     foreach my $param ( 'hostname', 'password' ) {
         $params->{$param} = XMLRPC::Data->type('string')->value($params->{$param});
     }
 
-    return $self->call_rpc( "vm.create", $params );
+    return $self->client->call_rpc( "vm.create", $params );
 }
 
-=head1 create_from 
-
-Creates a Disk, and then, a VM, and returns the corresponding operations.
-It combines the API method disk.create, and vm.create.
-This is a convenient method to do the disk.create and vm.create in a single API call.
-Three operations are created and returned (in this order): disk_create, iface_create, create
-
-=cut
 
 sub create_from {
-    my ( $self, $params, $disk_params, $src_disk_id ) = @_;
+    my ( $self, $params, $disk_spec, $src_disk_id ) = validated_list(
+        \@_,
+        vm_spec     => { isa => 'HashRef' },
+        disk_spec   => { isa => 'HashRef' },
+        src_disk_id => { isa => 'Int' }
+    );
+
+    _validated_params('vm_create_from', $params);
 
     foreach my $param ( 'hostname', 'password' ) {
         $params->{$param} = XMLRPC::Data
@@ -179,126 +92,210 @@ sub create_from {
             ->value($params->{$param});
     }
 
-    return $self->call_rpc( "vm.create_from", $params, $disk_params, $src_disk_id );
+    return $self->client->call_rpc( "vm.create_from", $params, $disk_spec, $src_disk_id );
 }
 
-=head1 update
-
-Updates a VM.
-
-=cut
 
 sub update {
-    my ( $self, $params ) = @_;
+    my ( $self, $params ) = validated_list(
+        \@_,
+        vm_spec => { isa => 'HashRef' }
+    );
 
     carp 'Required parameter id is not defined' if ( ! $self->id );
 
     $params ||= {};
-    return $self->call_rpc('vm.update', $self->id, $params);
+    return $self->client->call_rpc('vm.update', $self->id, $params);
 }
 
-=head1 disk_attach
-
-Attach a disk to a VM. 
-The account associated with apikey MUST own both VM and disk.
-A disk can only be attached to one VM.
-
-Params: disk_id
-
-=cut
 
 sub disk_attach {
-    my ( $self, $disk_id, $params ) = @_;
+    my ( $self, $disk_id, $params ) = validated_list(
+        \@_,
+        disk_id => { isa => 'Int'},
+        opts    => { isa => 'HashRef' }
+    );
 
     carp 'Required parameter id is not defined' if ( ! $self->id );
 
     if ( $params ) {
-        return $self->call_rpc('vm.disk_attach', $self->id, $disk_id, $params);
+        return $self->client->call_rpc('vm.disk_attach', $self->id, $disk_id, $params);
     }
     else {
-        return $self->call_rpc('vm.disk_attach', $self->id, $disk_id);
+        return $self->client->call_rpc('vm.disk_attach', $self->id, $disk_id);
     }
 }
 
-=head1 disk_detach
-
-Detach a disk from a VM. The disk MUST not be mounted on the VM. If the disk position is 0, the VM MUST be halted to detach the disk
-
-Params: disk_id
-
-=cut
 
 sub disk_detach {
-    my ( $self, $disk_id ) = @_;
+    my ( $self, $disk_id ) = validated_list(
+        \@_,
+        disk_id => { isa => 'Int'}
+    );
 
 
     carp 'Required parameter id is not defined' if ( ! $self->id );
 
-    return $self->call_rpc('vm.disk_detach', $self->id, $disk_id);
+    return $self->client->call_rpc('vm.disk_detach', $self->id, $disk_id);
 }
 
 
-=head1 start
-
-Starts a VM and return the corresponding operation
-Parameter: None
-
-=cut
 
 sub start {
     my ( $self ) = @_;
 
     carp 'Required parameter id is not defined' if ( ! $self->id );
-    return $self->call_rpc('vm.start', $self->id);
+    return $self->client->call_rpc('vm.start', $self->id);
 }
 
-=head1 stop
-
-Stops a VM and returns the corresponding operation.
-Parameter: None
-
-=cut
 
 sub stop {
     my ( $self ) = @_;
 
     carp 'Required parameter id is not defined' if ( ! $self->id );
-    return $self->call_rpc('vm.stop', $self->id);
+    return $self->client->call_rpc('vm.stop', $self->id);
 }
 
-=head1 reboot
-
-Reboots a VM and returns the corresponding operation
-Parameter: None
-
-=cut
 
 sub reboot {
     my ( $self ) = @_;
 
     carp 'Required parameter id is not defined' if ( ! $self->id );
-    return $self->call_rpc('vm.reboot', $self->id);
+    return $self->client->call_rpc('vm.reboot', $self->id);
 }
 
-=head1
-
-Deletes a VM. Deletes the disk attached in position 0, the disk used as system disk.
-Also deletes the first network interface. Detach all extra disks and network interfaces.
-Parameter: None
-
-=cut
 
 sub delete {
     my ( $self ) = @_;
 
     carp 'Required parameter id is not defined' if ( ! $self->id );
-    return $self->call_rpc('vm.delete', $self->id);
+    return $self->client->call_rpc('vm.delete', $self->id);
 }
+
+1;
+
+__END__
+=pod
+
+=head1 NAME
+
+Net::Gandi::Hosting::VM - Vm interface
+
+=head1 VERSION
+
+version 1.121850
+
+=head1 ATTRIBUTES
+
+=head2 id
+
+rw, Int. Id of the vm.
+
+=head1 METHODS
+
+=head2 list
+
+  $vm->list;
+
+List virtual machines.
+
+  input: opts (HashRef) : Filtering options
+  output: (HashRef)     : List of vm
+
+=head2 count
+
+  $vm->count;
+
+Count virtual machines.
+
+  input: opts (HashRef) : Filtering options
+  output: (Int)         : count of vm
+
+=head2 info
+
+  $vm->info
+
+Get information about a virtual machine.
+
+  input: None
+  output: (HashRef) : Vm informations
+
+=head2 create
+
+Create a new virtual machine with respect to the attributes specified by vm_spec.
+Disk, iface, and vm must be in the same datacenter.
+
+  input: vm_spec (HashRef)   : specifications of the VM to create
+  output: (ArrayRef)         : Operation vm create and iface create
+
+=head2 create_from
+
+Create a disk and a virtual machine.
+This is a convenient method to do the disk.create and vm.create in a single API call.
+
+  input: vm_spec (HashRef)   : specifications of the VM to create
+         disk_spec (HashRef) : specifications of the Disk to create
+         src_disk_id (Int)   : source disk unique identifier
+  output: (ArrayRef)         : Operation vm create, disk create, and iface create
+
+=head2 update
+
+  $vm->update;
+
+Update a virtual machine with respect to the attributes specified by update_spec.
+
+  input: vm_spec (HashRef) : specifications of the virtual machine to update
+  output: (HashRef)  : Vm update operation
+
+=head2 disk_attach
+
+Attach a disk to a virtual machine.
+To access the disk data inside the VM, it MUST be attached to the VM.
+When options.position is 0, swaps position with current disk 0.
+A disk can be attached to only one VM.
+
+=head2 disk_detach
+
+Detach a disk from a virtual machine.
+If the disk position is 0, i.e. the system disk, the virtual machine must be halted to detach the disk.
+
+=head2 start
+
+Starts a VM and return the corresponding operation
+Parameter: None
+
+=head2 stop
+
+Stops a VM and returns the corresponding operation.
+
+  input: None
+  output: (HashRef): Operation vm stop
+
+=head2 reboot
+
+Reboots a VM and returns the corresponding operation
+
+  input: None
+  output: (HashRef): operation vm reboot
+
+=head2 delete
+
+Deletes a VM. Deletes the disk attached in position 0, the disk used as system disk.
+Also deletes the first network interface. Detach all extra disks and network interfaces.
+
+  input: None
+  output: (HashRef): Operation vm delete
 
 =head1 AUTHOR
 
-Natal Ngétal, C<< <hobbestig@cpan.org> >>
+Natal Ngétal
+
+=head1 COPYRIGHT AND LICENSE
+
+This software is copyright (c) 2012 by Natal Ngétal.
+
+This is free software; you can redistribute it and/or modify it under
+the same terms as the Perl 5 programming language system itself.
 
 =cut
 
-1;

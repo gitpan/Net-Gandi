@@ -6,16 +6,20 @@
 # This is free software; you can redistribute it and/or modify it under
 # the same terms as the Perl 5 programming language system itself.
 #
-package Net::Gandi::Hosting::Datacenter;
+package Net::Gandi::Operation;
 {
-  $Net::Gandi::Hosting::Datacenter::VERSION = '1.121850';
+  $Net::Gandi::Operation::VERSION = '1.121850';
 }
 
-# ABSTRACT: Datacenter interface
+# ABSTRACT: Operation interface
 
 use Moose;
-use MooseX::Params::Validate;
 use Net::Gandi::Types Client => { -as => 'Client_T' };
+
+use Carp;
+
+
+has 'id' => ( is => 'rw', isa => 'Int' );
 
 has client => (
     is       => 'rw',
@@ -24,24 +28,22 @@ has client => (
 );
 
 
-sub list {
-    my ( $self, $params ) = validated_list(
-        \@_,
-        opts => { isa => 'HashRef', optional => 1 }
-    );
+sub info {
+    my ( $self ) = @_;
 
-    $params ||= {};
-    return $self->client->call_rpc( 'datacenter.list', $params );
+    carp 'Required parameter id is not defined' if ( ! $self->id );
+    return $self->client->call_rpc( 'operation.info', $self->id );
 }
 
 1;
+
 
 __END__
 =pod
 
 =head1 NAME
 
-Net::Gandi::Hosting::Datacenter - Datacenter interface
+Net::Gandi::Operation - Operation interface
 
 =head1 VERSION
 
@@ -49,14 +51,14 @@ version 1.121850
 
 =head1 METHODS
 
-=head2 list
+=head2 info
 
-  $datacenter->list;
+  $operation->info;
 
-List available datacenters..
+Get operation information.
 
-  input: opts (HashRef) : Filtering options
-  output: (HashRef)     : List of datacenter
+  input: None
+  output: (HashRef) : Operation information
 
 =head1 AUTHOR
 

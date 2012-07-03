@@ -6,22 +6,16 @@
 # This is free software; you can redistribute it and/or modify it under
 # the same terms as the Perl 5 programming language system itself.
 #
-package Net::Gandi::Types;
+package Net::Gandi::Transport::XMLRPC;
 {
-  $Net::Gandi::Types::VERSION = '1.121850';
+  $Net::Gandi::Transport::XMLRPC::VERSION = '1.121850';
 }
 
-# ABSTRACT: Net::Gandi types
+# ABSTRACT: A Perl interface for gandi api
 
-use MooseX::Types::Moose qw/Str ArrayRef HashRef/;
-use MooseX::Types -declare => [qw(Client Apikey)];
+use Moose::Role;
 
-class_type Client, { class => 'Net::Gandi::Client' };
-
-subtype Apikey,
-    as Str,
-    where   { length($_) == 24 },
-    message { "Apikey must be larger 24" };
+with 'Net::Gandi::Role::XMLRPC';
 
 1;
 
@@ -30,7 +24,7 @@ __END__
 
 =head1 NAME
 
-Net::Gandi::Types - Net::Gandi types
+Net::Gandi::Transport::XMLRPC - A Perl interface for gandi api
 
 =head1 VERSION
 
