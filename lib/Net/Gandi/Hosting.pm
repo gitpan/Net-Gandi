@@ -8,15 +8,16 @@
 #
 package Net::Gandi::Hosting;
 {
-  $Net::Gandi::Hosting::VERSION = '1.121851';
+  $Net::Gandi::Hosting::VERSION = '1.122080';
 }
 
 # ABSTRACT: Hosting interface
 
 use Moose;
 use MooseX::Params::Validate;
-use Net::Gandi::Types Client => { -as => 'Client_T' };
+use namespace::autoclean;
 
+use Net::Gandi::Types Client => { -as => 'Client_T' };
 use Net::Gandi::Hosting::Datacenter;
 use Net::Gandi::Hosting::VM;
 use Net::Gandi::Hosting::Disk;
@@ -116,6 +117,9 @@ sub datacenter {
     return $datacenter;
 }
 
+no Moose;
+__PACKAGE__->meta->make_immutable;
+
 1;
 
 __END__
@@ -127,7 +131,7 @@ Net::Gandi::Hosting - Hosting interface
 
 =head1 VERSION
 
-version 1.121851
+version 1.122080
 
 =head1 METHODS
 

@@ -8,7 +8,7 @@
 #
 package Net::Gandi::Error;
 {
-  $Net::Gandi::Error::VERSION = '1.121851';
+  $Net::Gandi::Error::VERSION = '1.122080';
 }
 
 # ABSTRACT: Internal class to manage error.
@@ -141,7 +141,7 @@ Net::Gandi::Error - Internal class to manage error.
 
 =head1 VERSION
 
-version 1.121851
+version 1.122080
 
 =head1 AUTHOR
 

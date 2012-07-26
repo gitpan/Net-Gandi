@@ -8,13 +8,15 @@
 #
 package Net::Gandi::Hosting::VM;
 {
-  $Net::Gandi::Hosting::VM::VERSION = '1.121851';
+  $Net::Gandi::Hosting::VM::VERSION = '1.122080';
 }
 
 # ABSTRACT: Vm interface
 
 use Moose;
 use MooseX::Params::Validate;
+
+use namespace::autoclean;
 use Net::Gandi::Types Client => { -as => 'Client_T' };
 use Net::Gandi::Error qw(_validated_params);
 
@@ -37,7 +39,7 @@ sub list {
     );
 
     $params ||= {};
-    return $self->client->call_rpc( "vm.list", $params );
+    return $self->client->api_call( "vm.list", $params );
 }
 
 
@@ -48,7 +50,7 @@ sub count {
     );
 
     $params ||= {};
-    return $self->client->call_rpc('vm.count', $params);
+    return $self->client->api_call('vm.count', $params);
 }
 
 
@@ -56,7 +58,7 @@ sub info {
     my ( $self ) = @_;
 
     carp 'Required parameter id is not defined' if ( ! $self->id );
-    return $self->client->call_rpc( 'vm.info', $self->id );
+    return $self->client->api_call( 'vm.info', $self->id );
 }
 
 
@@ -72,7 +74,7 @@ sub create {
         $params->{$param} = XMLRPC::Data->type('string')->value($params->{$param});
     }
 
-    return $self->client->call_rpc( "vm.create", $params );
+    return $self->client->api_call( "vm.create", $params );
 }
 
 
@@ -92,7 +94,7 @@ sub create_from {
             ->value($params->{$param});
     }
 
-    return $self->client->call_rpc( "vm.create_from", $params, $disk_spec, $src_disk_id );
+    return $self->client->api_call( "vm.create_from", $params, $disk_spec, $src_disk_id );
 }
 
 
@@ -105,7 +107,7 @@ sub update {
     carp 'Required parameter id is not defined' if ( ! $self->id );
 
     $params ||= {};
-    return $self->client->call_rpc('vm.update', $self->id, $params);
+    return $self->client->api_call('vm.update', $self->id, $params);
 }
 
 
@@ -119,10 +121,10 @@ sub disk_attach {
     carp 'Required parameter id is not defined' if ( ! $self->id );
 
     if ( $params ) {
-        return $self->client->call_rpc('vm.disk_attach', $self->id, $disk_id, $params);
+        return $self->client->api_call('vm.disk_attach', $self->id, $disk_id, $params);
     }
     else {
-        return $self->client->call_rpc('vm.disk_attach', $self->id, $disk_id);
+        return $self->client->api_call('vm.disk_attach', $self->id, $disk_id);
     }
 }
 
@@ -136,7 +138,7 @@ sub disk_detach {
 
     carp 'Required parameter id is not defined' if ( ! $self->id );
 
-    return $self->client->call_rpc('vm.disk_detach', $self->id, $disk_id);
+    return $self->client->api_call('vm.disk_detach', $self->id, $disk_id);
 }
 
 
@@ -145,7 +147,7 @@ sub start {
     my ( $self ) = @_;
 
     carp 'Required parameter id is not defined' if ( ! $self->id );
-    return $self->client->call_rpc('vm.start', $self->id);
+    return $self->client->api_call('vm.start', $self->id);
 }
 
 
@@ -153,7 +155,7 @@ sub stop {
     my ( $self ) = @_;
 
     carp 'Required parameter id is not defined' if ( ! $self->id );
-    return $self->client->call_rpc('vm.stop', $self->id);
+    return $self->client->api_call('vm.stop', $self->id);
 }
 
 
@@ -161,7 +163,7 @@ sub reboot {
     my ( $self ) = @_;
 
     carp 'Required parameter id is not defined' if ( ! $self->id );
-    return $self->client->call_rpc('vm.reboot', $self->id);
+    return $self->client->api_call('vm.reboot', $self->id);
 }
 
 
@@ -169,8 +171,11 @@ sub delete {
     my ( $self ) = @_;
 
     carp 'Required parameter id is not defined' if ( ! $self->id );
-    return $self->client->call_rpc('vm.delete', $self->id);
+    return $self->client->api_call('vm.delete', $self->id);
 }
+
+no Moose;
+__PACKAGE__->meta->make_immutable;
 
 1;
 
@@ -183,7 +188,7 @@ Net::Gandi::Hosting::VM - Vm interface
 
 =head1 VERSION
 
-version 1.121851
+version 1.122080
 
 =head1 ATTRIBUTES
 

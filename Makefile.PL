@@ -38,10 +38,11 @@ my %WriteMakefileArgs = (
     "MooseX::Types::URI" => 0,
     "Params::Check" => 0,
     "XMLRPC::Lite" => 0,
+    "namespace::autoclean" => 0,
     "strict" => 0,
     "warnings" => 0
   },
-  "VERSION" => "1.121851",
+  "VERSION" => "1.122080",
   "test" => {
     "TESTS" => "t/*.t"
   }

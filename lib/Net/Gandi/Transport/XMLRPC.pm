@@ -8,7 +8,7 @@
 #
 package Net::Gandi::Transport::XMLRPC;
 {
-  $Net::Gandi::Transport::XMLRPC::VERSION = '1.121851';
+  $Net::Gandi::Transport::XMLRPC::VERSION = '1.122080';
 }
 
 # ABSTRACT: A Perl interface for gandi api
@@ -28,7 +28,7 @@ Net::Gandi::Transport::XMLRPC - A Perl interface for gandi api
 
 =head1 VERSION
 
-version 1.121851
+version 1.122080
 
 =head1 AUTHOR
 

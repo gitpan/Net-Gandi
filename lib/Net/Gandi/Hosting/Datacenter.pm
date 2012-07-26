@@ -8,13 +8,15 @@
 #
 package Net::Gandi::Hosting::Datacenter;
 {
-  $Net::Gandi::Hosting::Datacenter::VERSION = '1.121851';
+  $Net::Gandi::Hosting::Datacenter::VERSION = '1.122080';
 }
 
 # ABSTRACT: Datacenter interface
 
 use Moose;
 use MooseX::Params::Validate;
+use namespace::autoclean;
+
 use Net::Gandi::Types Client => { -as => 'Client_T' };
 
 has client => (
@@ -31,8 +33,11 @@ sub list {
     );
 
     $params ||= {};
-    return $self->client->call_rpc( 'datacenter.list', $params );
+    return $self->client->api_call( 'datacenter.list', $params );
 }
+
+no Moose;
+__PACKAGE__->meta->make_immutable;
 
 1;
 
@@ -45,7 +50,7 @@ Net::Gandi::Hosting::Datacenter - Datacenter interface
 
 =head1 VERSION
 
-version 1.121851
+version 1.122080
 
 =head1 METHODS
 

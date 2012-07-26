@@ -8,7 +8,7 @@
 #
 package Net::Gandi::Role::XMLRPC;
 {
-  $Net::Gandi::Role::XMLRPC::VERSION = '1.121851';
+  $Net::Gandi::Role::XMLRPC::VERSION = '1.122080';
 }
 
 # ABSTRACT: A Perl interface for gandi api
@@ -36,7 +36,7 @@ sub _build_proxy {
     $proxy;
 }
 
-sub call_rpc {
+sub api_call {
     my ( $self, $method, @args ) = @_;
 
     my $api_response = $self->_proxy->call($method, $self->apikey, @args);
@@ -47,8 +47,8 @@ sub call_rpc {
         croak 'Error: ' . $self->err . ' ' . $self->errstr;
     }
 
-    return $self->date_object
-        ? $self->_date_object($api_response->result())
+    return $self->date_to_datetime
+        ? $self->_date_to_datetime($api_response->result())
         : $api_response->result();
 }
 
@@ -70,7 +70,7 @@ Net::Gandi::Role::XMLRPC - A Perl interface for gandi api
 
 =head1 VERSION
 
-version 1.121851
+version 1.122080
 
 =head1 cast_value
 

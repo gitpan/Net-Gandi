@@ -8,7 +8,7 @@
 #
 package Net::Gandi::Types;
 {
-  $Net::Gandi::Types::VERSION = '1.121851';
+  $Net::Gandi::Types::VERSION = '1.122080';
 }
 
 # ABSTRACT: Net::Gandi types
@@ -34,7 +34,7 @@ Net::Gandi::Types - Net::Gandi types
 
 =head1 VERSION
 
-version 1.121851
+version 1.122080
 
 =head1 AUTHOR
 

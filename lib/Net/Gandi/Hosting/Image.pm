@@ -8,13 +8,15 @@
 #
 package Net::Gandi::Hosting::Image;
 {
-  $Net::Gandi::Hosting::Image::VERSION = '1.121851';
+  $Net::Gandi::Hosting::Image::VERSION = '1.122080';
 }
 
 # ABSTRACT: Disk image interface
 
 use Moose;
 use MooseX::Params::Validate;
+use namespace::autoclean;
+
 use Net::Gandi::Types Client => { -as => 'Client_T' };
 
 use Carp;
@@ -36,7 +38,7 @@ sub list {
     );
 
     $params ||= {};
-    return $self->client->call_rpc( 'image.list', $params );
+    return $self->client->api_call( 'image.list', $params );
 }
 
 
@@ -44,8 +46,11 @@ sub info {
     my ( $self ) = @_;
 
     carp 'Required parameter id is not defined' if ( ! $self->id );
-    return $self->client->call_rpc( 'image.info', $self->id );
+    return $self->client->api_call( 'image.info', $self->id );
 }
+
+no Moose;
+__PACKAGE__->meta->make_immutable;
 
 1;
 
@@ -58,7 +63,7 @@ Net::Gandi::Hosting::Image - Disk image interface
 
 =head1 VERSION
 
-version 1.121851
+version 1.122080
 
 =head1 ATTRIBUTES
 

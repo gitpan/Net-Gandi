@@ -19,7 +19,7 @@ my %module_build_args = (
     "Natal Ng\303\251tal"
   ],
   "dist_name" => "Net-Gandi",
-  "dist_version" => "1.121851",
+  "dist_version" => "1.122080",
   "license" => "perl",
   "module_name" => "Net::Gandi",
   "recommends" => {},
@@ -39,6 +39,7 @@ my %module_build_args = (
     "MooseX::Types::URI" => 0,
     "Params::Check" => 0,
     "XMLRPC::Lite" => 0,
+    "namespace::autoclean" => 0,
     "strict" => 0,
     "warnings" => 0
   },

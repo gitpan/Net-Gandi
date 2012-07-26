@@ -8,13 +8,15 @@
 #
 package Net::Gandi::Client;
 {
-  $Net::Gandi::Client::VERSION = '1.121851';
+  $Net::Gandi::Client::VERSION = '1.122080';
 }
 
 # ABSTRACT: A Perl interface for gandi api
 
 use Moose;
 use MooseX::Types::URI qw(Uri);
+use namespace::autoclean;
+
 use Net::Gandi::Types qw(Apikey);
 
 use Module::Load;
@@ -63,28 +65,35 @@ has 'errstr' => (
 );
 
 
-has 'date_object' => (
+has 'date_to_datetime' => (
     is      => 'rw',
     default => 0,
     isa     => 'Bool',
 );
 
-sub _date_object {
+sub _date_to_datetime {
     my ( $self, $object ) = @_;
 
     load 'DateTime::Format::HTTP';
 
-    my $array = ref($object) ne 'ARRAY' ? [ $object ] : $object;
-    my $dt = 'DateTime::Format::HTTP';
+    my $array        = ref($object) ne 'ARRAY' ? [ $object ] : $object;
+    my $dt           = 'DateTime::Format::HTTP';
+    my @special_keys = ('ips', 'disks', 'ifaces');
 
     foreach my $obj (@{$array}) {
         while ( my ($key, $value) = each %{$obj} ) {
+            if ( $key ~~ @special_keys ) {
+                $self->_date_to_datetime($value);
+            }
             $obj->{$key} = $dt->parse_datetime($value) if $key =~ m/date_/;
         }
     }
 
     return $object;
 }
+
+no Moose;
+__PACKAGE__->meta->make_immutable;
 
 1;
 
@@ -97,7 +106,7 @@ Net::Gandi::Client - A Perl interface for gandi api
 
 =head1 VERSION
 
-version 1.121851
+version 1.122080
 
 =head1 ATTRIBUTES
 
@@ -125,7 +134,7 @@ rw, Int. Returns the numeric code of last error.
 
 rw, Str. Returns the human readable text for last error.
 
-=head2 date_object
+=head2 date_to_datetime
 
 rw, Bool. To transform the string date in a DateTime object. Use
 DateTime::Format::HTTP
