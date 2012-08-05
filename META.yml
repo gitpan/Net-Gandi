@@ -31,8 +31,9 @@ requires:
   Params::Check: 0
   XMLRPC::Lite: 0
   namespace::autoclean: 0
+  perl: 5.010
   strict: 0
   warnings: 0
 resources:
   repository: git://github.com/hobbestigrou/Net-Gandi.git
-version: 1.122080
+version: 1.122180

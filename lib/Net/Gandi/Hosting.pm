@@ -8,7 +8,7 @@
 #
 package Net::Gandi::Hosting;
 {
-  $Net::Gandi::Hosting::VERSION = '1.122080';
+  $Net::Gandi::Hosting::VERSION = '1.122180';
 }
 
 # ABSTRACT: Hosting interface
@@ -131,7 +131,7 @@ Net::Gandi::Hosting - Hosting interface
 
 =head1 VERSION
 
-version 1.122080
+version 1.122180
 
 =head1 METHODS
 

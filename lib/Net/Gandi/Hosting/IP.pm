@@ -8,7 +8,7 @@
 #
 package Net::Gandi::Hosting::IP;
 {
-  $Net::Gandi::Hosting::IP::VERSION = '1.122080';
+  $Net::Gandi::Hosting::IP::VERSION = '1.122180';
 }
 
 # ABSTRACT: Ip interface
@@ -102,7 +102,7 @@ Net::Gandi::Hosting::IP - Ip interface
 
 =head1 VERSION
 
-version 1.122080
+version 1.122180
 
 =head1 ATTRIBUTES
 

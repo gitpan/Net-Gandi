@@ -8,7 +8,7 @@
 #
 package Net::Gandi::Client;
 {
-  $Net::Gandi::Client::VERSION = '1.122080';
+  $Net::Gandi::Client::VERSION = '1.122180';
 }
 
 # ABSTRACT: A Perl interface for gandi api
@@ -74,8 +74,9 @@ has 'date_to_datetime' => (
 sub _date_to_datetime {
     my ( $self, $object ) = @_;
 
-    load 'DateTime::Format::HTTP';
+    ref($object) or return $object;
 
+    load 'DateTime::Format::HTTP';
     my $array        = ref($object) ne 'ARRAY' ? [ $object ] : $object;
     my $dt           = 'DateTime::Format::HTTP';
     my @special_keys = ('ips', 'disks', 'ifaces');
@@ -106,7 +107,7 @@ Net::Gandi::Client - A Perl interface for gandi api
 
 =head1 VERSION
 
-version 1.122080
+version 1.122180
 
 =head1 ATTRIBUTES
 

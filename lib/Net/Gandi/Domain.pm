@@ -6,12 +6,12 @@
 # This is free software; you can redistribute it and/or modify it under
 # the same terms as the Perl 5 programming language system itself.
 #
-package Net::Gandi::Hosting::Image;
+package Net::Gandi::Domain;
 {
-  $Net::Gandi::Hosting::Image::VERSION = '1.122180';
+  $Net::Gandi::Domain::VERSION = '1.122180';
 }
 
-# ABSTRACT: Disk image interface
+# ABSTRACT: Domain interface
 
 use Moose;
 use MooseX::Params::Validate;
@@ -22,7 +22,7 @@ use Net::Gandi::Types Client => { -as => 'Client_T' };
 use Carp;
 
 
-has 'id' => ( is => 'rw', isa => 'Int' );
+has domain => ( is => 'rw', isa => 'Str' );
 
 has client => (
     is       => 'rw',
@@ -38,19 +38,28 @@ sub list {
     );
 
     $params ||= {};
-    return $self->client->api_call( 'image.list', $params );
+    return $self->client->api_call( "domain.list", $params );
+}
+
+
+sub count {
+    my ( $self, $params ) = validated_list(
+        \@_,
+        opts => { isa => 'HashRef', optional => 1 }
+    );
+
+    $params ||= {};
+    return $self->client->api_call('domain.count', $params);
 }
 
 
 sub info {
     my ( $self ) = @_;
 
-    carp 'Required parameter id is not defined' if ( ! $self->id );
-    return $self->client->api_call( 'image.info', $self->id );
+    carp 'Required parameter domain attribute is not defined'
+        if ( ! $self->domain );
+    return $self->client->api_call( 'domain.info', $self->domain );
 }
-
-no Moose;
-__PACKAGE__->meta->make_immutable;
 
 1;
 
@@ -59,7 +68,7 @@ __END__
 
 =head1 NAME
 
-Net::Gandi::Hosting::Image - Disk image interface
+Net::Gandi::Domain - Domain interface
 
 =head1 VERSION
 
@@ -67,27 +76,38 @@ version 1.122180
 
 =head1 ATTRIBUTES
 
-=head2 id
+=head2 apikey
 
-rw, Int. Id of the image.
+rw, Str. The domain name.
 
 =head1 METHODS
 
 =head2 list
 
-  $image->list;
+  $domain->list;
 
-List avaible disk image.
+List domains associated to the contact represented by apikey.
 
   input: opts (HashRef) : Filtering options
-  output: (HashRef)     : List of disk image
+  output: (HashRef)     : List of domains
+
+=head2 count
+
+  $domain->count;
+
+Count domains associated to the contact represented by apikey.
+
+  input: opts (HashRef) : Filtering options
+  output: (Int)         : count of domain
 
 =head2 info
 
-Perform a image.info
+  $domain->info
+
+Get domain information.
 
   input: None
-  output: (HashRef) : Disk image informations
+  output: (HashRef) : Domain information
 
 =head1 AUTHOR
 

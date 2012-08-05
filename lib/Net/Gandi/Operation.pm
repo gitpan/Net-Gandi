@@ -8,7 +8,7 @@
 #
 package Net::Gandi::Operation;
 {
-  $Net::Gandi::Operation::VERSION = '1.122080';
+  $Net::Gandi::Operation::VERSION = '1.122180';
 }
 
 # ABSTRACT: Operation interface
@@ -51,7 +51,7 @@ Net::Gandi::Operation - Operation interface
 
 =head1 VERSION
 
-version 1.122080
+version 1.122180
 
 =head1 METHODS
 

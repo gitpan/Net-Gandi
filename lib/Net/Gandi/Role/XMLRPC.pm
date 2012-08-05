@@ -8,7 +8,7 @@
 #
 package Net::Gandi::Role::XMLRPC;
 {
-  $Net::Gandi::Role::XMLRPC::VERSION = '1.122080';
+  $Net::Gandi::Role::XMLRPC::VERSION = '1.122180';
 }
 
 # ABSTRACT: A Perl interface for gandi api
@@ -70,7 +70,7 @@ Net::Gandi::Role::XMLRPC - A Perl interface for gandi api
 
 =head1 VERSION
 
-version 1.122080
+version 1.122180
 
 =head1 cast_value
 

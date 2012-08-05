@@ -8,19 +8,23 @@
 #
 package Net::Gandi;
 {
-  $Net::Gandi::VERSION = '1.122080';
+  $Net::Gandi::VERSION = '1.122180';
 }
 
 # ABSTRACT: A Perl interface for gandi api
 
 use Moose;
+use MooseX::Params::Validate;
 use namespace::autoclean;
 
 use Net::Gandi::Client;
 use Net::Gandi::Types Client => { -as => 'Client_T' };
 
 use Net::Gandi::Hosting;
+use Net::Gandi::Domain;
 use Net::Gandi::Operation;
+
+use 5.010;
 
 has client => (
     is       => 'rw',
@@ -46,6 +50,21 @@ sub hosting {
 
     my $hosting = Net::Gandi::Hosting->new( client => $self->client );
     $hosting;
+}
+
+
+sub domain {
+    my ( $self, $id ) = validated_list(
+        \@_,
+        domain => { isa => 'Str', optional => 1 }
+    );
+
+    my %args  = ( client => $self->client );
+    $args{domain} = $id if $id;
+
+    my $domain = Net::Gandi::Domain->new(%args);
+
+    return $domain;
 }
 
 
@@ -78,7 +97,7 @@ Net::Gandi - A Perl interface for gandi api
 
 =head1 VERSION
 
-version 1.122080
+version 1.122180
 
 =head1 SYNOPSIS
 
@@ -104,6 +123,16 @@ Initialize the hosting environnement, and return an object representing it.
 
   input: none
   output: A Net::Gandi::Hosting object
+
+=head2 domain
+
+  my $client  = Net::Gandi->new(apikey => 'api_key');
+  my $cdomain = $client->domain;
+
+Initialize the domain environnement, and return an object representing it.
+
+  input: id (Int) : optional, domain name
+  output: Net::Gandi::Domain
 
 =head2 operation
 

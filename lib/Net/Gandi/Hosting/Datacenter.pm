@@ -8,7 +8,7 @@
 #
 package Net::Gandi::Hosting::Datacenter;
 {
-  $Net::Gandi::Hosting::Datacenter::VERSION = '1.122080';
+  $Net::Gandi::Hosting::Datacenter::VERSION = '1.122180';
 }
 
 # ABSTRACT: Datacenter interface
@@ -50,7 +50,7 @@ Net::Gandi::Hosting::Datacenter - Datacenter interface
 
 =head1 VERSION
 
-version 1.122080
+version 1.122180
 
 =head1 METHODS
 

@@ -9,6 +9,7 @@ README
 dist.ini
 lib/Net/Gandi.pm
 lib/Net/Gandi/Client.pm
+lib/Net/Gandi/Domain.pm
 lib/Net/Gandi/Error.pm
 lib/Net/Gandi/Hosting.pm
 lib/Net/Gandi/Hosting/Datacenter.pm

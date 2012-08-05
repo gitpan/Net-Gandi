@@ -8,7 +8,7 @@
 #
 package Net::Gandi::Hosting::Disk;
 {
-  $Net::Gandi::Hosting::Disk::VERSION = '1.122080';
+  $Net::Gandi::Hosting::Disk::VERSION = '1.122180';
 }
 
 # ABSTRACT: Disk interface
@@ -157,7 +157,7 @@ Net::Gandi::Hosting::Disk - Disk interface
 
 =head1 VERSION
 
-version 1.122080
+version 1.122180
 
 =head1 ATTRIBUTES
 
